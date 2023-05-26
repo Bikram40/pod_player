@@ -62,7 +62,7 @@ class _WebOverlay extends StatelessWidget {
             },
           ),
         ),
-        IgnorePointer(child: _podCtr.videoTitle ?? const SizedBox()),
+        _podCtr.videoTitle ?? const SizedBox(),
       ],
     );
   }
