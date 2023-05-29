@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import '../models/vimeo_models.dart';
+
+import '../../pod_player.dart';
 
 String podErrorString(String val) {
   return '*\n------error------\n\n$val\n\n------end------\n*';
@@ -30,6 +31,7 @@ class VideoApis {
   ) async {
     try {
       final response = await _makeRequestHash(videoId, hash);
+      vimeoResponse = jsonDecode(response.body);
       final jsonData =
           jsonDecode(response.body)['request']['files']['progressive'];
       final progressiveUrls = List.generate(

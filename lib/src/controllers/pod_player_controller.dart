@@ -10,6 +10,7 @@ import '../utils/logger.dart';
 import '../utils/video_apis.dart';
 import 'pod_getx_video_controller.dart';
 
+Map vimeoResponse ={};
 class PodPlayerController {
   late PodGetXVideoController _ctr;
   late String getTag;

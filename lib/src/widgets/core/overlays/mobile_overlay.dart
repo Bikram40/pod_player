@@ -58,9 +58,7 @@ class _MobileOverlay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(
-                child:
-                  child: _podCtr.videoTitle ?? const SizedBox(),
-          
+                child: _podCtr.videoTitle ?? const SizedBox(),
               ),
               MaterialIconButton(
                 toolTipMesg: _podCtr.podPlayerLabels.settings,
@@ -88,7 +86,7 @@ class _MobileOverlay extends StatelessWidget {
   }
 
   bool _isRtl() {
-    final Locale locale =  WidgetsBinding.instance.platformDispatcher.locale;
+    final Locale locale = WidgetsBinding.instance.platformDispatcher.locale;
     final langs = [
       'ar', // Arabic
       'fa', // Farsi
