@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as _html;
@@ -10,12 +12,13 @@ import '../utils/logger.dart';
 import '../utils/video_apis.dart';
 import 'pod_getx_video_controller.dart';
 
-Map vimeoResponse ={};
+Map vimeoResponse = {};
+
 class PodPlayerController {
   late PodGetXVideoController _ctr;
   late String getTag;
   bool _isCtrInitialised = false;
-
+  Floating? floating;
   Object? _initializationError;
 
   final PlayVideoFrom playVideoFrom;
@@ -31,6 +34,9 @@ class PodPlayerController {
 
   void _init() {
     getTag = UniqueKey().toString();
+    if(GetPlatform.isAndroid){
+    floating= Floating();
+    }
     Get.config(enableLog: PodVideoPlayer.enableGetxLogs);
     _ctr = Get.put(PodGetXVideoController(), permanent: true, tag: getTag)
       ..config(
@@ -60,6 +66,70 @@ class PodPlayerController {
       }
     });
     await _checkAndWaitTillInitialized();
+  }
+
+  Future<void> stopPIP() async {
+    if (GetPlatform.isIOS) {
+      await _ctr.videoCtr?.stopPictureInPicture();
+    } else if (GetPlatform.isAndroid) {
+      disableFullScreen(Get.context!);
+      showOverlay();
+    }
+  }
+
+  Future<void> setAutoPIP(bool value) async {
+    final bool? d = await _ctr.videoCtr?.isPictureInPictureSupported();
+    if (d ?? false) {
+      await _ctr.videoCtr?.setAutomaticallyStartPictureInPicture(
+        enableStartPictureInPictureAutomaticallyFromInline: value,
+      );
+    }
+  }
+
+  Future<void> setPIP({Rect? rect}) async {
+    if (GetPlatform.isAndroid) {
+    } else {
+      final bool? d = await _ctr.videoCtr?.isPictureInPictureSupported();
+      if (d ?? false) {
+        final MediaQueryData data = Get.mediaQuery;
+        final EdgeInsets paddingSafeArea = data.padding;
+        final double widthScreen = data.size.width;
+        await _ctr.videoCtr?.setPictureInPictureOverlayRect(
+          rect: rect ??
+              Rect.fromLTWH(
+                0,
+                paddingSafeArea.top + 80,
+                widthScreen,
+                9 * widthScreen / 16,
+              ),
+        );
+      }
+    }
+  }
+
+  Future<void> startPIP() async {
+    if (GetPlatform.isAndroid) {
+      final MediaQueryData data = Get.mediaQuery;
+      final EdgeInsets paddingSafeArea = data.padding;
+      final double widthScreen = data.size.width;
+      await floating?.enable(
+        sourceRectHint: Rectangle<int>(
+          0,
+          (paddingSafeArea.top + 80).toInt(),
+          widthScreen.toInt(),
+          9 * widthScreen ~/ 16,
+        ),
+      );
+      enableFullScreen();
+      hideOverlay();
+    } else {
+      final bool? d = await _ctr.videoCtr?.isPictureInPictureSupported();
+      if (d ?? false) {
+        // await _ctr.videoCtr?.pause();
+        await _ctr.videoCtr?.startPictureInPicture();
+        // await _ctr.videoCtr?.play();
+      }
+    }
   }
 
   Future<void> _checkAndWaitTillInitialized() async {
@@ -163,6 +233,7 @@ class PodPlayerController {
 
   ///Dispose pod video player controller
   void dispose() {
+    floating?.dispose();
     _isCtrInitialised = false;
     _ctr.videoCtr?.removeListener(_ctr.videoListner);
     _ctr.videoCtr?.dispose();

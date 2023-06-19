@@ -162,6 +162,13 @@ class _PodVideoController extends _PodUiController {
   Future<void> enableFullScreen(String tag) async {
     podLog('-full-screen-enable-entred');
     if (!isFullScreen) {
+      _enableFullScreenView(tag);
+      isFullScreen = true;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        update(['full-screen']);
+        update(['update-all']);
+      });
+      await 0.3.delay();
       if (onToggleFullScreen != null) {
         await onToggleFullScreen!(true);
       } else {
@@ -175,13 +182,6 @@ class _PodVideoController extends _PodUiController {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
         ]);
       }
-
-      _enableFullScreenView(tag);
-      isFullScreen = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        update(['full-screen']);
-        update(['update-all']);
-      });
     }
   }
 
@@ -207,11 +207,15 @@ class _PodVideoController extends _PodUiController {
           ),
         ]);
       }
-
+      await 0.2.delay();
       if (enablePop) _exitFullScreenView(context, tag);
       isFullScreen = false;
-      update(['full-screen']);
-      update(['update-all']);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        update(['full-screen']);
+        update(['update-all']);
+      });
+
+
     }
   }
 
@@ -223,7 +227,6 @@ class _PodVideoController extends _PodUiController {
   void _enableFullScreenView(String tag) {
     if (!isFullScreen) {
       podLog('full-screen-enabled');
-
       Navigator.push(
         mainContext,
         PageRouteBuilder(
