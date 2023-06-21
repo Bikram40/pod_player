@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as _html;
@@ -18,7 +16,7 @@ class PodPlayerController {
   late PodGetXVideoController _ctr;
   late String getTag;
   bool _isCtrInitialised = false;
-  Floating? floating;
+
   Object? _initializationError;
 
   final PlayVideoFrom playVideoFrom;
@@ -34,9 +32,7 @@ class PodPlayerController {
 
   void _init() {
     getTag = UniqueKey().toString();
-    if(GetPlatform.isAndroid){
-    floating= Floating();
-    }
+
     Get.config(enableLog: PodVideoPlayer.enableGetxLogs);
     _ctr = Get.put(PodGetXVideoController(), permanent: true, tag: getTag)
       ..config(
@@ -72,8 +68,8 @@ class PodPlayerController {
     if (GetPlatform.isIOS) {
       await _ctr.videoCtr?.stopPictureInPicture();
     } else if (GetPlatform.isAndroid) {
-      disableFullScreen(Get.context!);
-      showOverlay();
+      // disableFullScreen(Get.context!);
+      // showOverlay();
     }
   }
 
@@ -86,10 +82,11 @@ class PodPlayerController {
     }
   }
 
-  Future<void> setPIP({Rect? rect}) async {
+  Future<bool> setPIP({Rect? rect}) async {
+    bool? d;
     if (GetPlatform.isAndroid) {
     } else {
-      final bool? d = await _ctr.videoCtr?.isPictureInPictureSupported();
+      d = await _ctr.videoCtr?.isPictureInPictureSupported();
       if (d ?? false) {
         final MediaQueryData data = Get.mediaQuery;
         final EdgeInsets paddingSafeArea = data.padding;
@@ -105,29 +102,15 @@ class PodPlayerController {
         );
       }
     }
+    return d ?? false;
   }
 
   Future<void> startPIP() async {
     if (GetPlatform.isAndroid) {
-      final MediaQueryData data = Get.mediaQuery;
-      final EdgeInsets paddingSafeArea = data.padding;
-      final double widthScreen = data.size.width;
-      await floating?.enable(
-        sourceRectHint: Rectangle<int>(
-          0,
-          (paddingSafeArea.top + 80).toInt(),
-          widthScreen.toInt(),
-          9 * widthScreen ~/ 16,
-        ),
-      );
-      enableFullScreen();
-      hideOverlay();
     } else {
       final bool? d = await _ctr.videoCtr?.isPictureInPictureSupported();
       if (d ?? false) {
-        // await _ctr.videoCtr?.pause();
         await _ctr.videoCtr?.startPictureInPicture();
-        // await _ctr.videoCtr?.play();
       }
     }
   }
@@ -192,10 +175,20 @@ class PodPlayerController {
   //! video play/pause
 
   /// plays the video
-  void play() => _ctr.podVideoStateChanger(PodVideoState.playing);
+  void play() {
+    _ctr.podVideoStateChanger(PodVideoState.playing);
+    // if (!(_ctr.videoCtr?.value.isPlaying ?? true)) {
+    //   play();
+    // }
+  }
 
   /// pauses the video
-  void pause() => _ctr.podVideoStateChanger(PodVideoState.paused);
+  void pause() {
+    _ctr.podVideoStateChanger(PodVideoState.paused);
+    // if (_ctr.videoCtr?.value.isPlaying ?? false) {
+    //   pause();
+    // }
+  }
 
   /// toogle play and pause
   void togglePlayPause() {
@@ -233,7 +226,6 @@ class PodPlayerController {
 
   ///Dispose pod video player controller
   void dispose() {
-    floating?.dispose();
     _isCtrInitialised = false;
     _ctr.videoCtr?.removeListener(_ctr.videoListner);
     _ctr.videoCtr?.dispose();

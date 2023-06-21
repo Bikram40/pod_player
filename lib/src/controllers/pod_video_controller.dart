@@ -168,7 +168,6 @@ class _PodVideoController extends _PodUiController {
         update(['full-screen']);
         update(['update-all']);
       });
-      await 0.3.delay();
       if (onToggleFullScreen != null) {
         await onToggleFullScreen!(true);
       } else {
@@ -207,7 +206,6 @@ class _PodVideoController extends _PodUiController {
           ),
         ]);
       }
-      await 0.2.delay();
       if (enablePop) _exitFullScreenView(context, tag);
       isFullScreen = false;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
