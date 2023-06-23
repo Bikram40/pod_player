@@ -38,7 +38,9 @@ class _VideoOverlays extends StatelessWidget {
 
           /// Returns the custom overlay, otherwise returns the default
           /// overlay with gesture detector
-          return _podCtr.overlayBuilder!(overlayOptions);
+          return _podCtr.overlayBuilder != null
+              ? _podCtr.overlayBuilder!(overlayOptions)
+              : const SizedBox();
         },
       );
     } else {

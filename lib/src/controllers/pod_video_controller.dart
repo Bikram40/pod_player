@@ -168,19 +168,35 @@ class _PodVideoController extends _PodUiController {
         update(['full-screen']);
         update(['update-all']);
       });
-      if (onToggleFullScreen != null) {
-        await onToggleFullScreen!(true);
-      } else {
-        await Future.wait([
-          SystemChrome.setPreferredOrientations(
-            [
-              if (!kIsWeb) DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ],
-          ),
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
-        ]);
-      }
+      await onFullScreen();
+      // if (onToggleFullScreen != null) {
+      //   await onToggleFullScreen!(true);
+      // } else {
+      //   await Future.wait([
+      //     SystemChrome.setPreferredOrientations(
+      //       [
+      //         if (!kIsWeb) DeviceOrientation.landscapeLeft,
+      //         DeviceOrientation.landscapeRight,
+      //       ],
+      //     ),
+      //     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
+      //   ]);
+      // }
+    }
+  }
+  Future<void> onFullScreen() async {
+    if (onToggleFullScreen != null) {
+      await onToggleFullScreen!(true);
+    } else {
+      await Future.wait([
+        SystemChrome.setPreferredOrientations(
+          [
+            if (!kIsWeb) DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ],
+        ),
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
+      ]);
     }
   }
 

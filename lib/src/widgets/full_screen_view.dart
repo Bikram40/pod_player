@@ -2,6 +2,7 @@ part of 'package:pod_player/src/pod_player.dart';
 
 class FullScreenView extends StatefulWidget {
   final String tag;
+
   const FullScreenView({
     Key? key,
     required this.tag,
@@ -14,6 +15,7 @@ class FullScreenView extends StatefulWidget {
 class _FullScreenViewState extends State<FullScreenView>
     with TickerProviderStateMixin {
   late PodGetXVideoController _podCtr;
+
   @override
   void initState() {
     _podCtr = Get.find<PodGetXVideoController>(tag: widget.tag);
@@ -37,7 +39,6 @@ class _FullScreenViewState extends State<FullScreenView>
           color: Colors.white,
           strokeWidth: 2,
         );
-
     return WillPopScope(
       onWillPop: () async {
         if (kIsWeb) {

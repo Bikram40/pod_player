@@ -32,13 +32,20 @@ class PodPlayerController {
 
   void _init() {
     getTag = UniqueKey().toString();
-
     Get.config(enableLog: PodVideoPlayer.enableGetxLogs);
     _ctr = Get.put(PodGetXVideoController(), permanent: true, tag: getTag)
       ..config(
         playVideoFrom: playVideoFrom,
         playerConfig: podPlayerConfig,
       );
+  }
+
+  PodGetXVideoController? checkGetController(){
+    if(Get.isRegistered<PodGetXVideoController>(tag: getTag)){
+      return Get.find<PodGetXVideoController>(tag: getTag);
+    }else{
+      return null;
+    }
   }
 
   /// Initializes the video player.

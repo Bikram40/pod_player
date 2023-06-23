@@ -87,7 +87,19 @@ class _PodBaseController extends GetxController {
         update(['podVideoState']);
         update(['update-all']);
       }
+    }else{
+      if(_val == PodVideoState.playing){
+        _videoCtr?.play();
+      }else{
+        _videoCtr?.pause();
+      }
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        update(['podVideoState']);
+        update(['update-all']);
+      });
     }
+    // print('podVideo State Change  22 :: $_val ${ _podVideoState}');
+
   }
 
   void _listneToVideoPosition() {
