@@ -161,20 +161,23 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
     final _videoErrorWidget = AspectRatio(
       aspectRatio: _frameAspectRatio,
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.warning,
-              color: Colors.yellow,
-              size: 32,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              widget.podPlayerLabels.error,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ],
+        child: FittedBox(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.warning,
+                color: Colors.yellow,
+                size: 32,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                widget.podPlayerLabels.error,
+                style: const TextStyle(color: Colors.red,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
